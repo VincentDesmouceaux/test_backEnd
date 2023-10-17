@@ -23,16 +23,19 @@ function authenticateToken(req, res, next) {
         }
         if (!wordCounts[token]) {
             wordCounts[token] = 0;
+
+            
         }
-        if (wordCounts[token] >= 80000) {
-            // Le token a dépassé la limite de mots autorisée (80,000 mots)
+        const justifiedWords = req.body.split(/\s+/).filter(word => word.length > 0).length;
+
+        if (wordCounts[token] + justifiedWords > 80000) {
             console.log(`User with token ${token} exceeded word limit.`);
-            return res.status(402).json({ error: 'Payment Required' });
+            return res.status(402).json({ error: 'Payment Required. Word limit exceeded.' });
         }
-    
-        // Si le token n'a pas dépassé la limite, augmentez le compteur de mots
-        wordCounts[token]++;
-        console.log(`User with token ${token} justified ${wordCounts[token]} words today.`);
+
+        // Si l'utilisateur n'a pas dépassé la limite, augmente le compteur de mots
+        wordCounts[token] += justifiedWords;
+      
         req.user = user;
 
 

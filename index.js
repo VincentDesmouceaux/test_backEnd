@@ -36,15 +36,16 @@ app.post('/api/justify', authenticateToken, (req, res) => {
     if (contentType !== 'text/plain') {
         return res.status(400).json({ error: 'Bad Request. Content-Type must be text/plain.' });
     }
-    
     const text = req.body; // Récupère le texte du corps de la requête
     const justifiedText = justification.justifyText(text);
     res.send(justifiedText);
 });
 
+app.all("*", (req, res) => {
+    res.status(404).json({ message: "This route doesn't exist" });
+  });
+  
 
-// Port sur lequel le serveur écoutera les requêtes
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
+app.listen(process.env.PORT, () => {
     console.log(`Server started `);
 });
