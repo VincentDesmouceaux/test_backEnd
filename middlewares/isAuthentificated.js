@@ -1,6 +1,19 @@
 const jwt = require('jsonwebtoken');
 
-const wordCounts = {};
+let wordCounts = {}; 
+function resetWordCounts() {
+    wordCounts = {}; 
+}
+
+// Réinitialiser le compteur à minuit (00:00)
+setInterval(() => {
+    const now = new Date();
+    if (now.getHours() === 0 && now.getMinutes() === 0) {
+        resetWordCounts();
+        console.log('Word counts reset.');
+    }
+}, 60000); // Vérifie l'heure toutes les minutes
+
 
 function authenticateToken(req, res, next) {
     const authHeader = req.header('Authorization');
@@ -29,8 +42,8 @@ function authenticateToken(req, res, next) {
         const justifiedWords = req.body.split(/\s+/).filter(word => word.length > 0).length;
 
         if (wordCounts[token] + justifiedWords > 80000) {
-            console.log(`User with token ${token} exceeded word limit.`);
-            return res.status(402).json({ error: 'Payment Required. Word limit exceeded.' });
+            
+            return res.status(402).json({ error: 'Payment Required' });
         }
 
         // Si l'utilisateur n'a pas dépassé la limite, augmente le compteur de mots
