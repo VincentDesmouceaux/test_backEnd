@@ -4,9 +4,8 @@ const express = require('express');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const justification = require ('./middlewares/justification')
+const authenticateToken = require ('./middlewares/isAuthentificated')
 const upload = multer(); // Initialiser multer pour gérer les données de formulaire
-
-
 const app = express();
 app.use(upload.none()); // Utiliser multer pour gérer les données de formulaire
 
@@ -29,29 +28,6 @@ app.post('/api/token', (req, res) => {
     res.json({ token: token });
 });
 
-function authenticateToken(req, res, next) {
-    const authHeader = req.header('Authorization');
-
-    if (!authHeader) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const tokenRegex = /^Bearer (.+)$/; // Expression régulière pour extraire le token
-    const match = authHeader.match(tokenRegex);
-
-    if (!match) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const token = match[1]; // Récupère le token à partir du match
-    jwt.verify(token, process.env.SECRET_KEY, { algorithm: 'HS256' }, (err, user) => {
-        if (err) {
-            return res.status(403).json({ error: 'Forbidden' });
-        }
-        req.user = user;
-        next();
-    });
-}
 
 
 // Endpoint pour justifier le texte
@@ -70,5 +46,5 @@ app.post('/api/justify', authenticateToken, (req, res) => {
 // Port sur lequel le serveur écoutera les requêtes
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-    console.log(`Serveur en écoute sur le port ${PORT}`);
+    console.log(`Server started `);
 });
