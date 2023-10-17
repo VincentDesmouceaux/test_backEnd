@@ -42,7 +42,7 @@ app.post('/api/justify', authenticateToken, (req, res) => {
 });
 
 app.all("*", (req, res) => {
-    res.status(404).json({ message: "This route doesn't exist" });
+    res.status(404).json({ message: "Bienvenue sur le serveur du test de backend !" });
   });
   
 
